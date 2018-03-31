@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zuhause/components/BasicButton.dart';
 import 'package:zuhause/components/MyHttp.dart';
 import 'package:zuhause/raspi.dart';
@@ -13,12 +14,33 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  int temp = 0;
+
+  @override
+  void initState() {
+    MyHttp.get('/api/temp/interna').then((result) {
+      if (result['success']) {
+        setState(() => temp = (result['data']['t'] as double).ceil());
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       drawer: _buildDrawer(context),
       appBar: new AppBar(
-        title: const Text("Zuhause"),
+        title: const Text('Zuhause'),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text(
+              '${temp.toString()}˚C',
+              style: new TextStyle(color: Colors.white),
+            ),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: _buildBody(context),
     );
@@ -30,18 +52,21 @@ class HomeState extends State<Home> {
         children: <Widget>[
           new ListTile(
             leading: new Icon(Icons.home),
-            title: new Text("Home"),
+            title: new Text('Home'),
             selected: true,
           ),
           new ListTile(
             leading: new Icon(Icons.developer_board),
-            title: new Text("Raspi"),
-            onTap: () => Navigator.of(context).pushNamed(Raspi.routerName),
+            title: new Text('Raspi'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(Raspi.routerName);
+            },
           ),
           new Divider(),
           new ListTile(
             leading: new Icon(Icons.exit_to_app),
-            title: new Text("Desconectar"),
+            title: new Text('Desconectar'),
             onTap: logout,
           ),
         ],
@@ -105,5 +130,10 @@ class HomeState extends State<Home> {
     print(result);
   }
 
-  void logout() {}
+  void logout() {
+    final storage = new FlutterSecureStorage();
+    storage.delete(key: 'server');
+    storage.delete(key: 'user');
+    storage.delete(key: 'pass');
+  }
 }

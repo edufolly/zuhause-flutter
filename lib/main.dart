@@ -7,7 +7,7 @@ class ZuhauseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: "Zuhause",
+      title: 'Zuhause',
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.indigo,

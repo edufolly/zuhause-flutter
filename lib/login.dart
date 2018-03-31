@@ -48,7 +48,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: const Text("Zuhause"),
+        title: const Text('Zuhause'),
       ),
       body: _buildBody(context),
     );

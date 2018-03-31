@@ -22,7 +22,7 @@ class MyHttp {
 
     var credentials = new HttpClientBasicCredentials(user.user, user.pass);
 
-    httpClient.addCredentials(Uri.parse(url), "basic", credentials);
+    httpClient.addCredentials(Uri.parse(url), 'basic', credentials);
 
     Map result;
 
