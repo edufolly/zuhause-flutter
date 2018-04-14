@@ -30,15 +30,15 @@ class MyHttp {
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        var body = await response.transform(UTF8.decoder).join();
+        var body = await response.transform(utf8.decoder).join();
         result = {
           'success': true,
           'code': response.statusCode,
           'message': 'sucesso',
-          'data': JSON.decode(body)
+          'data': json.decode(body)
         };
       } else {
-        var body = await response.transform(UTF8.decoder).join();
+        var body = await response.transform(utf8.decoder).join();
         result = {
           'success': false,
           'code': response.statusCode,

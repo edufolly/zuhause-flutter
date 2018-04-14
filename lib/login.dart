@@ -103,7 +103,20 @@ class _LoginState extends State<Login> {
   }
 
   void login() {
-    // TODO - Verificar se estão preenchidos.
+    if (_server.text.isEmpty) {
+      MyDialogs.alertError(context, 'O servidor deve ser informado.');
+      return;
+    }
+
+    if (_user.text.isEmpty) {
+      MyDialogs.alertError(context, 'O usuário deve ser informado.');
+      return;
+    }
+
+    if (_pass.text.isEmpty) {
+      MyDialogs.alertError(context, 'A senha deve ser informada.');
+      return;
+    }
 
     u.server = _server.text;
     u.user = _user.text;
@@ -113,7 +126,7 @@ class _LoginState extends State<Login> {
   }
 
   void valid() async {
-    MyDialogs.circularWating(context, 'Autenticando');
+    MyDialogs.circularWating(context, 'Autenticando...');
 
     Map result = await MyHttp.get('/api/login');
 
