@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zuhause/components/BasicButton.dart';
@@ -14,15 +16,8 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  int temp = 0;
-
   @override
   void initState() {
-    MyHttp.get('/api/temp/interna').then((result) {
-      if (result['success']) {
-        setState(() => temp = (result['data']['t'] as double).ceil());
-      }
-    });
     super.initState();
   }
 
@@ -34,11 +29,35 @@ class HomeState extends State<Home> {
         title: const Text('Zuhause'),
         actions: <Widget>[
           new FlatButton(
-            child: new Text(
-              '${temp.toString()}˚C',
-              style: new TextStyle(color: Colors.white),
+            onPressed: () => setState(() {}),
+            child: new FutureBuilder(
+              future: _getTemp(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return new CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.white),
+                    );
+                  default:
+                    if (snapshot.hasError) {
+                      return new Text(
+                        'Error: ${snapshot.error}',
+                        style: new TextStyle(
+                          color: Colors.white,
+                        ),
+                      );
+                    } else {
+                      return new Text(
+                        '${snapshot.data}˚C',
+                        style: new TextStyle(
+                          color: Colors.white,
+                        ),
+                      );
+                    }
+                }
+              },
             ),
-            onPressed: () {},
           ),
         ],
       ),
@@ -128,6 +147,11 @@ class HomeState extends State<Home> {
       MyDialogs.alertError(context, '${result['message']} (${result['code']})');
     }
     print(result);
+  }
+
+  Future<int> _getTemp() async {
+    Map result = await MyHttp.get('/api/temp/interna');
+    return (result['data']['t'] as double).ceil();
   }
 
   void logout() {
