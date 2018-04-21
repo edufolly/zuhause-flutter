@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zuhause/components/BasicButton.dart';
 import 'package:zuhause/components/MyHttp.dart';
+import 'package:zuhause/login.dart';
+import 'package:zuhause/model/User.dart';
 import 'package:zuhause/raspi.dart';
 import 'package:zuhause/util/MyDialogs.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -16,6 +19,8 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  User user = new User();
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +74,15 @@ class HomeState extends State<Home> {
     return new Drawer(
       child: new ListView(
         children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: new Text(user.user),
+            accountEmail: new Text(user.server),
+            currentAccountPicture: new CircleAvatar(
+              backgroundImage: new CachedNetworkImageProvider(
+                user.getGravatarUrl(),
+              ),
+            ),
+          ),
           new ListTile(
             leading: new Icon(Icons.home),
             title: new Text('Home'),
@@ -86,7 +100,7 @@ class HomeState extends State<Home> {
           new ListTile(
             leading: new Icon(Icons.exit_to_app),
             title: new Text('Desconectar'),
-            onTap: logout,
+            onTap: _logout,
           ),
         ],
       ),
@@ -100,40 +114,40 @@ class HomeState extends State<Home> {
         children: <Widget>[
           new BasicButton(
             text: 'Suíte',
-            onPressed: () => callApi('/api/luz/suite'),
+            onPressed: () => _callApi('/api/luz/suite'),
           ),
           new BasicButton(
             text: 'Escritório',
-            onPressed: () => callApi('/api/luz/escritorio'),
+            onPressed: () => _callApi('/api/luz/escritorio'),
           ),
           new BasicButton(
             text: 'Sala',
-            onPressed: () => callApi('/api/luz/sala'),
+            onPressed: () => _callApi('/api/luz/sala'),
           ),
           new BasicButton(
             text: 'Cozinha',
-            onPressed: () => callApi('/api/luz/cozinha'),
+            onPressed: () => _callApi('/api/luz/cozinha'),
           ),
           new BasicButton(
             text: 'Escada Teto',
-            onPressed: () => callApi('/api/luz/escada_teto'),
+            onPressed: () => _callApi('/api/luz/escada_teto'),
           ),
           new BasicButton(
             text: 'Escada Parede',
-            onPressed: () => callApi('/api/luz/escada_parede'),
+            onPressed: () => _callApi('/api/luz/escada_parede'),
           ),
           new BasicButton(
             text: 'Frente',
-            onPressed: () => callApi('/api/luz/frente'),
+            onPressed: () => _callApi('/api/luz/frente'),
           ),
           new BasicButton(
             text: 'Rele Off',
-            onPressed: () => callApi('/api/rele/off'),
+            onPressed: () => _callApi('/api/rele/off'),
             color: Colors.deepOrange,
           ),
           new BasicButton(
             text: 'Rele On',
-            onPressed: () => callApi('/api/rele/on'),
+            onPressed: () => _callApi('/api/rele/on'),
             color: Colors.deepOrange,
           ),
         ],
@@ -141,7 +155,7 @@ class HomeState extends State<Home> {
     );
   }
 
-  void callApi(String path) async {
+  void _callApi(String path) async {
     Map result = await MyHttp.get(path);
     if (!result['success']) {
       MyDialogs.alertError(context, '${result['message']} (${result['code']})');
@@ -154,10 +168,12 @@ class HomeState extends State<Home> {
     return (result['data']['t'] as double).ceil();
   }
 
-  void logout() {
+  void _logout() {
     final storage = new FlutterSecureStorage();
     storage.delete(key: 'server');
     storage.delete(key: 'user');
     storage.delete(key: 'pass');
+    Navigator.pop(context);
+    Navigator.of(context).pushReplacementNamed(Login.routerName);
   }
 }

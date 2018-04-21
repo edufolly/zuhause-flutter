@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
             storage.read(key: 'pass').then((pass) {
               if (pass != null) {
                 u.pass = pass;
-                valid();
+                _valid();
               }
             });
           }
@@ -95,14 +95,14 @@ class _LoginState extends State<Login> {
               'ENTRAR',
               style: new TextStyle(color: Colors.white),
             ),
-            onPressed: login,
+            onPressed: _login,
           ),
         ),
       ],
     );
   }
 
-  void login() {
+  void _login() {
     if (_server.text.isEmpty) {
       MyDialogs.alertError(context, 'O servidor deve ser informado.');
       return;
@@ -122,10 +122,10 @@ class _LoginState extends State<Login> {
     u.user = _user.text;
     u.pass = _pass.text;
 
-    valid();
+    _valid();
   }
 
-  void valid() async {
+  void _valid() async {
     MyDialogs.circularWating(context, 'Autenticando...');
 
     Map result = await MyHttp.get('/api/login');
