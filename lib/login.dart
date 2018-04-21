@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zuhause/components/MyHttp.dart';
 import 'package:zuhause/home.dart';
 import 'package:zuhause/model/User.dart';
+import 'package:zuhause/util/CircularWaiting.dart';
 import 'package:zuhause/util/MyDialogs.dart';
 
 class Login extends StatefulWidget {
@@ -64,32 +65,38 @@ class _LoginState extends State<Login> {
           color: Theme.of(context).accentColor,
         ),
         new Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: new TextField(
             controller: _server,
             keyboardType: TextInputType.url,
-            decoration: new InputDecoration(hintText: 'Servidor'),
+            decoration: new InputDecoration(
+              labelText: 'Servidor',
+            ),
           ),
         ),
         new Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: new TextField(
             controller: _user,
             keyboardType: TextInputType.text,
-            decoration: new InputDecoration(hintText: 'Usuário'),
+            decoration: new InputDecoration(
+              labelText: 'Usuário',
+            ),
           ),
         ),
         new Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: new TextField(
             controller: _pass,
             obscureText: true,
             keyboardType: TextInputType.text,
-            decoration: new InputDecoration(hintText: 'Senha'),
+            decoration: new InputDecoration(
+              labelText: 'Senha',
+            ),
           ),
         ),
         new Padding(
-          padding: const EdgeInsets.only(top: 60.0),
+          padding: const EdgeInsets.only(top: 50.0),
           child: new RaisedButton(
             child: new Text(
               'ENTRAR',
@@ -125,25 +132,27 @@ class _LoginState extends State<Login> {
     _valid();
   }
 
-  void _valid() async {
-    MyDialogs.circularWating(context, 'Autenticando...');
+  void _valid() {
+    CircularWaiting waiting = new CircularWaiting(context, 'Aguarde...');
+    waiting.show();
 
-    Map result = await MyHttp.get('/api/login');
+    MyHttp.get('/api/login').then((result) {
+      if (result['success']) {
+        storage.write(key: 'server', value: u.server);
+        storage.write(key: 'user', value: u.user);
+        storage.write(key: 'pass', value: u.pass);
 
-    if (result['success']) {
-      storage.write(key: 'server', value: u.server);
-      storage.write(key: 'user', value: u.user);
-      storage.write(key: 'pass', value: u.pass);
+        _server.clear();
+        _user.clear();
+        _pass.clear();
 
-      _server.clear();
-      _user.clear();
-      _pass.clear();
-
-      Navigator.pop(context);
-      Navigator.of(context).pushReplacementNamed(Home.routerName);
-    } else {
-      Navigator.pop(context);
-      MyDialogs.alertError(context, '${result['message']} (${result['code']})');
-    }
+        waiting.close();
+        Navigator.of(context).pushReplacementNamed(Home.routerName);
+      } else {
+        waiting.close();
+        MyDialogs.alertError(
+            context, '${result['message']} (${result['code']})');
+      }
+    });
   }
 }
