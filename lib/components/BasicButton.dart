@@ -7,8 +7,7 @@ class BasicButton extends StatelessWidget {
     @required this.text,
     @required this.onPressed,
     this.color: const Color(0xFF4152AF),
-  })
-      : assert(text != null),
+  })  : assert(text != null),
         assert(onPressed != null),
         assert(color != null),
         super(key: key);
@@ -25,6 +24,7 @@ class BasicButton extends StatelessWidget {
         padding: new EdgeInsets.all(8.0),
         child: new Text(
           text,
+          textAlign: TextAlign.center,
           style: new TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,

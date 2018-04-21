@@ -108,50 +108,69 @@ class HomeState extends State<Home> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return new Center(
-      child: new ListView(
-        padding: new EdgeInsets.all(6.0),
-        children: <Widget>[
-          new BasicButton(
+    final Orientation orientation = MediaQuery.of(context).orientation;
+    return new GridView.count(
+      crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+      padding: const EdgeInsets.all(4.0),
+      childAspectRatio: (orientation == Orientation.portrait) ? 1.6 : 1.9,
+      children: <Widget>[
+        new GridTile(
+          child: new BasicButton(
             text: 'Suíte',
             onPressed: () => _callApi('/api/luz/suite'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Escritório',
             onPressed: () => _callApi('/api/luz/escritorio'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Sala',
             onPressed: () => _callApi('/api/luz/sala'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Cozinha',
             onPressed: () => _callApi('/api/luz/cozinha'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Escada Teto',
             onPressed: () => _callApi('/api/luz/escada_teto'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Escada Parede',
             onPressed: () => _callApi('/api/luz/escada_parede'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Frente',
             onPressed: () => _callApi('/api/luz/frente'),
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Rele Off',
             onPressed: () => _callApi('/api/rele/off'),
             color: Colors.deepOrange,
           ),
-          new BasicButton(
+        ),
+        new GridTile(
+          child: new BasicButton(
             text: 'Rele On',
             onPressed: () => _callApi('/api/rele/on'),
             color: Colors.deepOrange,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
