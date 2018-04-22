@@ -111,8 +111,8 @@ class HomeState extends State<Home> {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return new GridView.count(
       crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+      childAspectRatio: (orientation == Orientation.portrait) ? 1.8 : 2.2,
       padding: const EdgeInsets.all(4.0),
-      childAspectRatio: (orientation == Orientation.portrait) ? 1.6 : 1.9,
       children: <Widget>[
         new GridTile(
           child: new BasicButton(
